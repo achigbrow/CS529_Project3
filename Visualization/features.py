@@ -4,8 +4,6 @@ import librosa
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
-from sklearn.preprocessing import normalize
-
 
 def get_mfccs(directory, classifications):
     sample_rate = 44100
@@ -61,24 +59,23 @@ def get_mfccs(directory, classifications):
     print(data.shape)
     data = data[1:, :]
     print(data.shape)
-
-    x = np.transpose(data[:, -1])
-    print(x.shape)
-    features = data[:, :-1]
-    features = features.astype(float)
-    print(features.dtype)
-    print(features.shape)
-    y = np.median(features, axis=1)
-    print(y.shape)
-
-    plt.scatter(x, y, c="blue")
-    plt.show()
+    #
+    # x = np.transpose(data[:, -1])
+    # print(x.shape)
+    # features = data[:, :-1]
+    # features = features.astype(float)
+    # print(features.dtype)
+    # print(features.shape)
+    # y = np.median(features, axis=1)
+    # print(y.shape)
+    #
+    # plt.scatter(x, y, c="blue")
+    # plt.show()
 
     return data
 
-
-if __name__ == "__main__":
-    with open(r"D:\proj3_data\project3\train.csv") as f:
+def get_classes(filepath):
+    with open(filepath) as f:
         reader = csv.reader(f)
         data = list(reader)
 
@@ -87,4 +84,9 @@ if __name__ == "__main__":
         data[i][0] = "{0:s}.wav".format(temp)
 
     print(data[0])
+
+    return data
+
+if __name__ == "__main__":
+    data = get_classes(r"D:\proj3_data\project3\train.csv")
     get_mfccs(r"D:\proj3_data\project3\trainwav", data)

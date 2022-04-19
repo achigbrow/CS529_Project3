@@ -30,13 +30,13 @@ def build_parser():
     parser.add_argument(
         "-train_out",
         type=str,
-        default=r"D:\proj3_data\project3\trainwav2",
+        default=r"D:\proj3_data\project3\trainwav",
         help="output directory for train wav files",
     )
     parser.add_argument(
         "-test_out",
         type=str,
-        default=r"D:\proj3_data\project3\testwav2",
+        default=r"D:\proj3_data\project3\testwav",
         help="output directory for test wav files",
     )
     return parser

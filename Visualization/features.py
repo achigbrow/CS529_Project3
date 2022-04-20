@@ -51,8 +51,8 @@ def get_mfccs(directory, classifications):
         concat_features_features = np.hstack(
             (concat_features_features, average_difference_features)
         )
-        norm = np.linalg.norm(concat_features_features)
-        concat_features_features = concat_features_features / norm
+        # norm = np.linalg.norm(concat_features_features)
+        # concat_features_features = concat_features_features / norm
         concat_features_features = np.hstack((concat_features_features, cls))
         data = np.vstack([data, concat_features_features])
 

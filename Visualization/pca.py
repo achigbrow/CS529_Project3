@@ -34,11 +34,11 @@ if __name__ == "__main__":
 
     colors = {
         "0": "deeppink",
-        "1": "deepskyblue",
+        "1": "greenyellow",
         "2": "orange",
         "3": "blueviolet",
         "4": "thistle",
-        "5": "lightskyblue",
+        "5": "deepskyblue",
     }
 
     grouped = df.groupby("Classification")

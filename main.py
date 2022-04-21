@@ -1,45 +1,22 @@
-import tensorflow as tf
+import tf_test as tf
 
-import os
+import librosa as lib
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import librosa.display
 
-def main():
-    print("TensorFlow version:", tf.__version__)
+import IPython.display as ipd
 
-    mnist = tf.keras.datasets.mnist
+import matplotlib.pyplot as plt
 
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
-    x_train, x_test = x_train/ 255.0, x_test/255.0
-
-    model = tf.keras.models.Sequential([
-        tf.keras.layers.Flatten(input_shape=(28, 28)),
-        tf.keras.layers.Dense(128, activation='relu'),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(10)
-    ])
-
-    predictions = model(x_train[:1]).numpy()
-
-    tf.nn.softmax(predictions).numpy()
-
-    loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-
-    loss_fn(y_train[:1], predictions).numpy()
-
-    model.compile(optimizer='adam',
-                  loss=loss_fn,
-                  metrics=['accuracy'])
-
-    model.fit(x_train,y_train,epochs=5)
-
-    model.evaluate(x_test,y_test,verbose=2)
-
-    probability_model = tf.keras.Sequential([model,tf.keras.layers.Softmax()])
-
-    print(probability_model(x_test[:5]))
+def audio_features():
+    audio_path = './data/train/00907299.mp3'
+    x, sr = lib.load(audio_path)
+    ipd.Audio(audio_path)
+    plt.figure(figsize=(14, 5))
+    librosa.display.waveshow(x, sr=sr)
 
 
 if __name__ == "__main__":
-    main()
+    #tf.tf_test()
+    audio_features()

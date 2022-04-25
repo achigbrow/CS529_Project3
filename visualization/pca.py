@@ -1,15 +1,15 @@
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
-from features import get_classes
-from features import get_mfccs
+from utils import get_classes
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from mfccs import get_single_mfcc_features
+from mfccs import get_processed_mfccs
 
 
 def get_pca(features):
-    # nsamples, nfeatures = features.shape
-    # n = min(nsamples, nfeatures)
+
     pca = PCA(n_components=2)
     transformed = pca.fit(features).transform(features)
     scaler = MinMaxScaler()
@@ -17,18 +17,10 @@ def get_pca(features):
     return scaler.transform(transformed)
 
 
-if __name__ == "__main__":
-    data = get_classes(r"D:\proj3_data\project3\train.csv")
-    # data = get_classes(r"D:\repos\CS529_Project3\train1.csv")
-    mfcc = get_mfccs(r"D:\proj3_data\project3\trainwav", data)
-    # get rid of the last col that holds classification
-    features = mfcc[:, :-1]
-    classification = mfcc[:, -1]
-    pca_mfcc = get_pca(features)
-
-    df = pd.DataFrame(pca_mfcc, columns=["Comp1", "Comp2"])
+def plot_pca(classification, features):
+    pca = get_pca(features)
+    df = pd.DataFrame(pca, columns=["Comp1", "Comp2"])
     df["Classification"] = classification
-    unique_classes = df["Classification"].unique
 
     fig, ax = plt.subplots()
 
@@ -48,3 +40,14 @@ if __name__ == "__main__":
             ax=ax, kind="scatter", x="Comp1", y="Comp2", label=key, color=colors[key]
         )
     plt.show()
+
+
+if __name__ == "__main__":
+    classifications = np.array(get_classes(r"D:\proj3_data\project3\train.csv"))
+    # classifications = np.array(get_classes(r"D:\repos\CS529_Project3\train1.csv"))
+    classification = classifications[:, 1]
+    directory = r"D:\proj3_data\project3\trainwav"
+    features1 = get_single_mfcc_features(classifications, directory)
+    features2 = get_processed_mfccs(directory, classifications)
+    plot_pca(classification, features1)
+    plot_pca(classification, features2)

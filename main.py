@@ -1,5 +1,6 @@
 import pandas as pd
-import tf_test as tf
+import tf_test as tft
+import tensorflow as tf
 
 import librosa as lib
 
@@ -34,22 +35,29 @@ def NNModel():
 
 
     #Splitting data
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.1)
 
     model = models.Sequential()
-    model.add(layers.Dense(256, activation='relu', input_shape=(X_train.shape[1],)))
+    model.add(layers.Dense(512, activation='relu', input_shape=(X_train.shape[1],)))
+    model.add(layers.Dropout(0.1))
+    model.add(layers.Dense(256, activation='relu'))
+    model.add(layers.Dropout(0.1))
     model.add(layers.Dense(128, activation='relu'))
+    model.add(layers.Dropout(0.1))
     model.add(layers.Dense(64, activation='relu'))
+    model.add(layers.Dropout(0.1))
     model.add(layers.Dense(6, activation='softmax'))
 
-    model.compile(optimizer='adam',
+    sgd = tf.keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+
+    model.compile(optimizer=sgd,
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
     history = model.fit(X_train,
                         y_train,
-                        epochs=100,
-                        batch_size=128)
+                        epochs=1000,
+                        batch_size=32)
 
     print("Evaluating model with test data:")
     test_loss, test_acc = model.evaluate(X_val, y_val)
@@ -62,7 +70,7 @@ def NNModel():
         expected = np.array(y_val)
         expected = expected[i]
         correct = predicted == expected
-        print("Predicted value: " + str(predicted) + ", Expected value: " + str(expected) + ", Correct: " + str(correct))
+        #print("Predicted value: " + str(predicted) + ", Expected value: " + str(expected) + ", Correct: " + str(correct))
 
     #Predict the test data
     testdata = pd.read_csv('testdata.csv')
@@ -86,12 +94,12 @@ def NNModel():
 
     prediction_df.rename(columns={0: 'id', 1: 'genre'},inplace=True)
 
-    print(prediction_df)
+    #print(prediction_df)
 
     prediction_df.to_csv('predictions.csv', index=False)
 
 
 
 if __name__ == "__main__":
-    #tf.tf_test()
+    #tft.tf_test()
     NNModel()

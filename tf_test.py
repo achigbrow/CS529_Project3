@@ -1,8 +1,8 @@
 import tensorflow as tf
 
 import os
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2 ]Q!A~ZQ~@S'
 
 def tf_test():
     print("TensorFlow version:", tf.__version__)

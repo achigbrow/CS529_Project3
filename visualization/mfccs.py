@@ -8,14 +8,14 @@ import pandas as pd
 from utils import get_classes
 from sklearn.preprocessing import StandardScaler
 
-def get_single_mfcc_features(classification, directory):
+def get_single_mfcc_features(file_ids, directory):
     """return a matrix consisting of a single mfcc for each example in the classification array"""
     sc = StandardScaler()
 
-    features = np.zeros((len(classification), 1515))
-    for i in range(len(classification)):
+    features = np.zeros((len(file_ids), 1515))
+    for i in range(len(file_ids)):
 
-        filepath = os.path.join(directory, classification[i][0])
+        filepath = os.path.join(directory, file_ids[i])
         pcm_data, sr = librosa.load(filepath, offset=15.0, duration=60.0)
         n_fft = int(sr * 0.02)
         hop_length = n_fft // 2
@@ -30,6 +30,7 @@ def get_single_mfcc_features(classification, directory):
 def accumulate_single_mfcc(directory, classifications):
     """ creates a scatter plot of mfcc's using only n_mfcc=1
     plot should be either maxes, mins, or ranges
+    classifications should be 2d array with id and genre
   """ ""
 
     maxes = []
@@ -40,8 +41,8 @@ def accumulate_single_mfcc(directory, classifications):
 
     # Load the audio
     for i in range(len(classifications)):
-        cls = classifications[i][1]
-        clses.append(int(cls))
+        genre = classifications[i][1]
+        clses.append(int(genre))
 
         filepath = os.path.join(directory, classifications[i][0])
         pcm_data, sr = librosa.load(filepath)
@@ -94,7 +95,7 @@ def plot_single_mfcc(plot, directory, classifications):
     plt.show()
 
 
-def get_processed_mfccs(directory, classifications):
+def get_processed_mfccs(directory, file_ids):
     """generates mfccs and the 'smooths' the data returning a n*72 matrix of attributes"""
 
     mfcc_size = 24
@@ -103,9 +104,9 @@ def get_processed_mfccs(directory, classifications):
     data = np.zeros((1, mfcc_size * 3))
 
     # Load the audio
-    for i in range(len(classifications)):
+    for file in file_ids:
 
-        filepath = os.path.join(directory, classifications[i])
+        filepath = os.path.join(directory, file)
         pcm_data, _ = librosa.load(filepath, sr=sample_rate)
         n_fft = int(sample_rate * 0.02)
         hop_length = n_fft // 2

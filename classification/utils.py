@@ -4,14 +4,15 @@ import numpy as np
 
 
 def write_submission(id, genre):
-    df = pd.Dataframe({"id": id, "genre": genre})
-    df.to_csv("submit.csv")
+    df = pd.DataFrame({"id": id, "genre": genre})
+    df.to_csv("submit.csv", index=False)
 
 
 def get_classes(filepath, pad=True):
     with open(filepath) as f:
         reader = csv.reader(f)
         data = list(reader)
+    # TODO figure out way to get rid of header row
     if pad:
         for i in range(len(data)):
             temp = f"{int(data[i][0]):08d}"

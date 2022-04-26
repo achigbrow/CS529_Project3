@@ -4,13 +4,13 @@ from utils import get_classes
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from mfccs import get_single_mfcc_features
-from mfccs import get_processed_mfccs
+from visualization.mfccs import get_single_mfcc_features
+from visualization.mfccs import get_processed_mfccs
 
 
-def get_pca(features):
+def get_pca(features, n):
 
-    pca = PCA(n_components=2)
+    pca = PCA(n_components=n)
     transformed = pca.fit(features).transform(features)
     scaler = MinMaxScaler()
     scaler.fit(transformed)
@@ -18,7 +18,7 @@ def get_pca(features):
 
 
 def plot_pca(classification, features):
-    pca = get_pca(features)
+    pca = get_pca(features, 2)
     df = pd.DataFrame(pca, columns=["Comp1", "Comp2"])
     df["Classification"] = classification
 

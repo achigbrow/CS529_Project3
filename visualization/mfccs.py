@@ -98,7 +98,7 @@ def plot_single_mfcc(plot, directory, classifications):
 def get_processed_mfccs(directory, file_ids):
     """generates mfccs and the 'smooths' the data returning a n*72 matrix of attributes"""
 
-    mfcc_size = 24
+    mfcc_size = 13
     sample_rate = 44100
 
     data = np.zeros((1, mfcc_size * 3))

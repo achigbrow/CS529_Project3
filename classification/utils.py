@@ -4,6 +4,10 @@ import numpy as np
 
 
 def write_submission(id, genre):
+
+    for i in range(len(id)):
+        id[i] = int(id[i][:-4])
+
     df = pd.DataFrame({"id": id, "genre": genre})
     df.to_csv("submit.csv", index=False)
 
@@ -17,7 +21,11 @@ def get_classes(filepath, pad=True):
         for i in range(len(data)):
             temp = f"{int(data[i][0]):08d}"
             data[i][0] = "{0:s}.wav".format(temp)
+    else:
+        for i in range(len(data)):
+            data[i][0] = "{0:s}.wav".format(data[i][0])
 
+    print('padding', pad)
     print(data[0])
 
     return data

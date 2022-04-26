@@ -6,13 +6,14 @@ from utils import write_submission
 from utils import get_classes
 
 from visualization.mfccs import get_processed_mfccs
+from visualization.pca import get_pca
 import numpy as np
 import matplotlib.pyplot as plt
 import time
 
 
 def classify(X, y, Z):
-    clf = make_pipeline(StandardScaler(), LinearSVC(random_state=0, tol=1e-5)).fit(X, y)
+    clf = make_pipeline(StandardScaler(), LinearSVC(random_state=0, tol=1e-5, dual=False, C=2**5.6, max_iter=10000)).fit(X, y)
     # plot_support_vectors(X, y, clf)
     prediction = clf.predict(Z)
     return prediction
@@ -63,35 +64,39 @@ def driver(train_dir, test_dir, train_csv, test_csv):
     train_classifications = np.array(get_classes(train_csv))
     train_ids = train_classifications[:, 0]
     train_genres = train_classifications[:, 1]
-    rand_train_ids = np.random.choice(train_ids, 1600)
-    rand_train_genres = np.zeros(len(rand_train_ids))
+    # rand_train_ids = np.random.choice(train_ids, 2400)
+    # rand_train_genres = np.zeros(len(rand_train_ids))
+    #
+    # for i in range(len(rand_train_ids)):
+    #     index = np.where(train_ids == rand_train_ids[i])
+    #     rand_train_genres[i] = train_classifications[index, 1]
 
-    for i in range(len(rand_train_ids)):
-        index = np.where(train_ids == rand_train_ids[i])
-        rand_train_genres[i] = train_classifications[index, 1]
+    scaler = StandardScaler()
 
 
     test_ids = get_classes(test_csv)
     test_ids_new = [id for sublist in test_ids for id in sublist]
 
+
     train_s = time.time()
-    train_mfccs = get_processed_mfccs(train_dir, rand_train_ids)
+    train_data = get_processed_mfccs(train_dir, train_ids)
+    train_data = scaler.fit_transform(train_data)
     train_e = time.time()
     print('train mfcc', train_e - train_s)
     test_s = time.time()
-    test_mfccs = get_processed_mfccs(test_dir, list(test_ids_new))
+    test_data = get_processed_mfccs(test_dir, test_ids_new)
+    test_data = scaler.fit_transform(test_data)
     test_e = time.time()
     print('test mfcc', test_e - test_s)
+
     predict_s = time.time()
-    predictions = classify(train_mfccs, train_genres, test_mfccs)
+    predictions = classify(train_data, train_genres, test_data)
+    predictions = predictions.astype(int)
     predict_e = time.time()
     print('prediction', predict_e - predict_s)
-    submit_ids = get_classes(test_csv, False)
-    write_submission(submit_ids, predictions)
+    write_submission(test_ids_new, predictions)
 
 if __name__ == "__main__":
-    # classifications = get_classes(r"D:\proj3_data\project3\train.csv")
-    # classifications = get_classes(r"D:\repos\CS529_Project3\train1.csv")
     train_dir = r"D:\proj3_data\project3\trainwav"
     # train_csv = r"D:\repos\CS529_Project3\train1.csv"
     train_csv = r"D:\proj3_data\project3\train.csv"

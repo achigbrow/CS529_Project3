@@ -122,17 +122,17 @@ def get_features(df_in, directory):
   for i in df_in.genre.unique():
     # all the file indices with the same genre
     filelist = df_in.loc[df_in.genre == i].index
-  for j in range(0, len(filelist)):  # len(filelist)
-    filename = df_in.iloc[filelist[j]].wav
-    file_path = "{0:s}/{1:s}".format(directory, filename)
-    genre = i
-    # Load the file
-    y, sr = librosa.load(file_path, sr=28000)
-    # cut the file to signal start and end
-    # generate features & output numpy array
-    data = generate_features(y, sr)
-    features.append(data[np.newaxis, ...])
-    labels.append(genre)
+    for j in range(0, len(filelist)):  # len(filelist)
+      filename = df_in.iloc[filelist[j]].wav
+      file_path = "{0:s}/{1:s}".format(directory, filename)
+      genre = i
+      # Load the file
+      y, sr = librosa.load(file_path, sr=28000)
+      # cut the file to signal start and end
+      # generate features & output numpy array
+      data = generate_features(y, sr)
+      features.append(data[np.newaxis, ...])
+      labels.append(genre)
   output = np.concatenate(features, axis=0)
   return (np.array(output), labels)
 
@@ -270,29 +270,29 @@ def driver():
   train_features = np.array((train_features - np.min(train_features)) / (
         np.max(train_features) - np.min(train_features)))
   train_features = train_features / np.std(train_features)
-  numpy.savetxt("train_features.csv", train_features, delimiter=",")
+  numpy.save("train_features", train_features)
 
   test_features = np.array((test_features - np.min(test_features)) / (
       np.max(test_features) - np.min(test_features)))
   test_features = test_features / np.std(test_features)
-  numpy.savetxt("test_features.csv", test_features, delimiter=",")
+  numpy.save("test_features", test_features)
 
   val_features = np.array((val_features - np.min(val_features)) / (
         np.max(val_features) - np.min(val_features)))
   val_features = val_features / np.std(val_features)
-  numpy.savetxt("val_features.csv", val_features, delimiter=",")
+  numpy.save("val_features", val_features)
 
   submit_features = np.array((submit_features - np.min(submit_features)) / (
       np.max(submit_features) - np.min(submit_features)))
   submit_features = submit_features / np.std(submit_features)
-  numpy.savetxt("submit_features.csv", test_features, delimiter=",")
+  numpy.save("submit_features", test_features)
 
   train_labels = np.array(train_labels)
-  numpy.savetxt("train_labels.csv", train_labels, delimiter=",")
+  numpy.save("train_labels", train_labels)
   test_labels = np.array(test_labels)
-  numpy.savetxt("test_labels.csv", test_labels, delimiter=",")
+  numpy.save("test_labels", test_labels)
   val_labels = np.array(val_labels)
-  numpy.savetxt("val_labels.csv", val_labels, delimiter=",")
+  numpy.save("val_labels", val_labels)
 
 
   print('getting predictions')

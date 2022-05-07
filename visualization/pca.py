@@ -11,6 +11,7 @@ import os
 def get_pca(features, n):
 
     pca = PCA(n_components=n)
+
     transformed = pca.fit(features).transform(features)
     scaler = MinMaxScaler()
     scaler.fit(transformed)
@@ -59,9 +60,11 @@ def plot_pca(file_list, directory):
 
 
 def scatter_plot_pca(classification, features):
+
     pca = get_pca(features, 2)
     df = pd.DataFrame(pca, columns=["Comp1", "Comp2"])
-    df["Classification"] = classification
+
+    df["genre"] = classification
 
     fig, ax = plt.subplots()
 
@@ -74,7 +77,7 @@ def scatter_plot_pca(classification, features):
         "5": "deepskyblue",
     }
 
-    grouped = df.groupby("Classification")
+    grouped = df.groupby("genre")
 
     for key, group in grouped:
         group.plot(
@@ -82,9 +85,25 @@ def scatter_plot_pca(classification, features):
         )
     plt.show()
 
+def get_features(file_list, directory):
+    features = np.zeros((1, 1510))
+    _, cols = features.shape
+    for i in range(len(file_list)):
+        filepath = os.path.join(directory, file_list[i, 0])
+        pcm_data, _ = librosa.load(filepath, offset=15.0, duration=30.0, sr=100)
+        padding = cols - len(pcm_data)
+        if padding < 0:
+            print("increase size", cols, padding)
+        elif padding > 0:
+            padded = np.pad(pcm_data, (0, padding), 'constant', constant_values=0)
+        else:
+            padded = pcm_data
+        features = np.vstack([features, padded])
+    features = features[1:, :]
+    return features
 
 if __name__ == "__main__":
-    # classifications = np.array(get_classes(r"D:\proj3_data\project3\train.csv"))
+    # file_list = np.array(get_classes(r"D:\proj3_data\project3\train.csv"))
     # # classifications = np.array(get_classes(r"D:\repos\CS529_Project3\train1.csv"))
     # classification = classifications[:, 1]
     # directory = r"D:\proj3_data\project3\trainwav"
@@ -93,8 +112,11 @@ if __name__ == "__main__":
     # plot_pca(classification, features1)
     # plot_pca(classification, features2)
 
-    file_list = get_classes(r"D:\repos\CS529_Project3\examples.csv")
-    file_list = np.array(file_list)
-    print(file_list.shape)
+    file_list = np.array(get_classes(r"D:\repos\CS529_Project3\examples.csv"))
+
     train_dir = r"D:\proj3_data\project3\trainwav"
-    plot_pca(file_list, train_dir)
+    features = get_features(file_list, train_dir)
+    print(features.shape)
+    classification = file_list[:, 1]
+
+    scatter_plot_pca(classification, features)

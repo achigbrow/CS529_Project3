@@ -149,7 +149,7 @@ def get_submit_features(df_in, directory):
 def run_model(X_train, y_train, X_val, y_val, X_test, y_test, X_submit):
     input_shape = (128, 1700, 3)
     CNNmodel = models.Sequential()
-    CNNmodel.add(layers.Conv2D(16, (3, 3), activation="relu", input_shape=input_shape))
+    CNNmodel.add(layers.Conv2D(64, (3, 3), activation="relu", input_shape=input_shape))
     CNNmodel.add(layers.MaxPooling2D((2, 2)))
     CNNmodel.add(layers.Dropout(0.2))
     CNNmodel.add(layers.Conv2D(32, (3, 3), activation="relu"))

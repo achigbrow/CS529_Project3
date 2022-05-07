@@ -86,6 +86,12 @@ def scatter_plot_pca(classification, features):
     plt.show()
 
 def get_features(file_list, directory):
+    """ builds a feature array of time series
+
+    :param file_list: list of file ids
+    :param directory:
+    :return:
+    """
     features = np.zeros((1, 1510))
     _, cols = features.shape
     for i in range(len(file_list)):
@@ -103,15 +109,7 @@ def get_features(file_list, directory):
     return features
 
 if __name__ == "__main__":
-    # file_list = np.array(get_classes(r"D:\proj3_data\project3\train.csv"))
-    # # classifications = np.array(get_classes(r"D:\repos\CS529_Project3\train1.csv"))
-    # classification = classifications[:, 1]
-    # directory = r"D:\proj3_data\project3\trainwav"
-    # features1 = get_single_mfcc_features(classifications, directory)
-    # features2 = get_processed_mfccs(directory, classifications)
-    # plot_pca(classification, features1)
-    # plot_pca(classification, features2)
-
+    """Provides default values and functions"""
     file_list = np.array(get_classes(r"D:\repos\CS529_Project3\examples.csv"))
 
     train_dir = r"D:\proj3_data\project3\trainwav"

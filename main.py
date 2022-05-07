@@ -10,6 +10,7 @@ import IPython.display as ipd
 
 import matplotlib.pyplot as plt
 import numpy as np
+import random as r
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
@@ -106,8 +107,11 @@ def EnsembleNNModel(n):
 
     results_list = []
 
-    for i in range(0,n):
+    i = 0
+
+    while i < n:
         data = pd.read_csv('data.csv')
+        data = data.sample(frac=1.0, replace=True)
 
         print("Creating Neural Network #" + str(i+1) + " for Ensemble")
 
@@ -119,10 +123,6 @@ def EnsembleNNModel(n):
         data = data.drop(columns, axis=1)
         data = data.sample(frac=0.8, axis='columns')
 
-        #print(data.head())
-
-        #print(y)
-
         #normalizing
         scaler = StandardScaler()
         X = scaler.fit_transform(np.array(data.iloc[:, :-1], dtype=float))
@@ -132,17 +132,33 @@ def EnsembleNNModel(n):
         X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)
 
         model = models.Sequential()
-        model.add(layers.Dense(512, activation='relu', input_shape=(X_train.shape[1],)))
-        model.add(layers.Dropout(0.2))
-        model.add(layers.Dense(256, activation='relu',kernel_regularizer='l1'))
-        model.add(layers.Dropout(0.2))
-        model.add(layers.Dense(128, activation='relu'))
-        model.add(layers.Dropout(0.2))
-        model.add(layers.Dense(64, activation='relu'))
-        model.add(layers.Dropout(0.2))
+
+        n_layers = r.randint(5,8)
+        neurons = r.randint(1,8)*(128)
+        dropout_rate = 0.2
+        act_i = r.randint(0,1)
+        act_arr = ['relu','LeakyReLU']
+
+        model.add(layers.Dense(neurons, activation=act_arr[act_i], input_shape=(X_train.shape[1],)))
+        model.add(layers.Dropout(dropout_rate))
+
+        for k in range(0, n_layers):
+            if neurons > 12:
+                neurons = neurons // 2
+            act_i = r.randint(0, 1)
+            act_arr = ['relu', 'LeakyReLU']
+            model.add(layers.Dense(neurons, activation=act_arr[act_i]))
+            model.add(layers.Dropout(dropout_rate))
+
         model.add(layers.Dense(6, activation='softmax'))
 
-        #sgd = tf.keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
+        #lr = r.randint(1,5)*0.01
+        #d = r.randint(1,5)*1e-6
+        #m = r.randint(1,5)*0.1
+        #sgd = tf.keras.optimizers.SGD(learning_rate=lr, decay=d, momentum=m, nesterov=True)
+
+        #optimizer = ['adam',sgd]
+        #o_index = r.randint(0,1)
 
         model.compile(optimizer='adam',
                   loss='sparse_categorical_crossentropy',
@@ -150,8 +166,8 @@ def EnsembleNNModel(n):
 
         history = model.fit(X_train,
                         y_train,
-                        epochs=200,
-                        batch_size=32)
+                        epochs=100,
+                        batch_size=64)
 
         print("Evaluating model with test data:")
         test_loss, test_acc = model.evaluate(X_val, y_val)
@@ -184,16 +200,18 @@ def EnsembleNNModel(n):
         for test_prediction in test_predictions:
             test_result.append(np.argmax(test_prediction))
 
-        if i == 0:
-            results_list = pd.DataFrame({'NN' + str(i): test_result})
-            print(results_list)
-        else:
-            new_result = pd.DataFrame({'NN' + str(i): test_result})
-            results_list = results_list.join(new_result)
-            print(results_list)
-        if i == n-1:
-            model_result = results_list.mode(axis='columns')
-            total_result = pd.Series(model_result[0])
+        if test_acc > 0.5:
+            if i == 0:
+                results_list = pd.DataFrame({'NN' + str(i): test_result})
+                print(results_list)
+            else:
+                new_result = pd.DataFrame({'NN' + str(i): test_result})
+                results_list = results_list.join(new_result)
+                print(results_list)
+            if i == n-1:
+                model_result = results_list.mode(axis='columns')
+                total_result = pd.Series(model_result[0])
+            i = i + 1
 
     testdata = pd.read_csv('testdata.csv')
 
@@ -210,4 +228,4 @@ def EnsembleNNModel(n):
 if __name__ == "__main__":
     #tft.tf_test()
     #NNModel()
-    EnsembleNNModel(500)
+    EnsembleNNModel(10)

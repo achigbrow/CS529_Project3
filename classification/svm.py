@@ -1,10 +1,9 @@
-from sklearn.svm import LinearSVC
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-from utils import write_submission
-from utils import get_classes
+from utils.utils import write_submission
+from utils.utils import get_classes
 
 from visualization.mfccs import get_processed_mfccs
 import numpy as np

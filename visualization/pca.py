@@ -1,6 +1,6 @@
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
-from utils import get_classes
+from utils.utils import get_classes
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

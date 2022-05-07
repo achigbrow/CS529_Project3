@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from utils import get_classes
+from utils.utils import get_classes
 from sklearn.preprocessing import StandardScaler
 
 

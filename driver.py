@@ -2,14 +2,19 @@ from utils import converter
 import argparse
 
 
-def convert_files():
-    """Converts mp3 files to wav files."""
-    parser = build_parser()
-    options, _ = parser.parse_known_args()
-    train_convert = converter.Converter(options.train)
-    train_convert.convert(options.train_out)
-    test_convert = converter.Converter(options.test)
-    test_convert.convert(options.test_out)
+def convert_files(train, train_out, test, test_out):
+    """Converts mp3 files to wav files.
+
+    :param train: full path to directory containing mp3 training files
+    :param train_out: full path to directory where training .wav files should be populated
+    :param test: full path to directory containing mp3 test files
+    :param test_out: full path to directory where testing .wav files should be populated
+    :return: none
+    """
+    train_convert = converter.Converter(train)
+    train_convert.convert(train_out)
+    test_convert = converter.Converter(test)
+    test_convert.convert(test_out)
 
 
 def build_parser():
@@ -43,4 +48,6 @@ def build_parser():
 
 
 if __name__ == "__main__":
-    convert_files()
+    parser = build_parser()
+    options, _ = parser.parse_known_args()
+    convert_files(options.train, options.train_out, options.test, options.test_out)

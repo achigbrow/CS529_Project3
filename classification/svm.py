@@ -10,6 +10,7 @@ from visualization.mfccs import get_processed_mfccs
 import numpy as np
 import tensorflow as tf
 import time
+from sklearn.svm import SVC
 
 
 def classify(X, y, X_test, y_test, Z):
@@ -23,10 +24,13 @@ def classify(X, y, X_test, y_test, Z):
     :return: prediction of Z classes
     """
     # initiate and fit LSVC
-    clf = make_pipeline(
-        StandardScaler(),
-        LinearSVC(random_state=0, tol=1e-5, dual=False, C=2**5.6, max_iter=10000),
-    ).fit(X, y)
+    # clf = make_pipeline(
+    #     StandardScaler(),
+    #     LinearSVC(random_state=0, tol=1e-5, dual=False, C=2**5.6, max_iter=10000),
+    # ).fit(X, y)
+
+    # uses rbf kernel
+    clf = make_pipeline(StandardScaler(), SVC(gamma='auto')).fit(X, y)
     # get predictions
     submission = clf.predict(Z)
     # Obtain the training and testing accuracy scores

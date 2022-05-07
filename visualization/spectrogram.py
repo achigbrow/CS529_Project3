@@ -1,7 +1,6 @@
-from utils import get_classes
+# see the readme for a list of references used to build this class
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import librosa
 import librosa.display
 import os
@@ -10,6 +9,12 @@ from random import randint
 
 
 def display_spectrogram(file_list, directory):
+    """displays a plot of the mel-spectrogram of each file in the list
+
+    :param file_list: list of .wav file names and their genre
+    :param directory: where .wav files are located
+    :return: none
+    """
     genres = {
         "0": "Rock",
         "1": "Pop",
@@ -25,7 +30,9 @@ def display_spectrogram(file_list, directory):
         n_fft = 500
         hop_length = round(n_fft / 2)
         filepath = os.path.join(directory, file_list[i, 0])
+        # load 3 second time series
         y, sr = librosa.load(filepath, offset=15.0, duration=3)
+        # obtain the mel-spectrogram array
         spectros = librosa.feature.melspectrogram(
             y=y,
             sr=sr,
@@ -61,6 +68,13 @@ def padding(array, xx, yy):
 
 
 def ms_features(file_df, directory, genre=True):
+    """Builds a padded array of melspectrograms
+
+    :param file_df: dataframe containing the file data
+    :param directory: where the .wav files live
+    :param genre: whether or not to return a list of genres
+    :return: either a feature array and a list of genres or just a feature array
+    """
     genres = []
     features = []
     n_fft = 256
@@ -71,12 +85,9 @@ def ms_features(file_df, directory, genre=True):
         offset = randint(1, 20)
         if genre:
             genres.append(file_df["genre"][index])
-
+        # load 3 second time series
         y, sr = librosa.load(filepath, offset=offset, duration=3.0)
-
-        # test = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=64,
-        #                                       fmax=8000, n_fft=n_fft, hop_length=hop_length)
-        # print(test.shape)
+        # obtain mel-spectrograms
         spectros = padding(
             librosa.feature.melspectrogram(
                 y=y, sr=sr, n_mels=64, fmax=8000, n_fft=n_fft, hop_length=hop_length
@@ -95,4 +106,4 @@ def ms_features(file_df, directory, genre=True):
 
 
 if __name__ == "__main__":
-    print("whoops")
+    print("try calling this with the correct file")

@@ -1,3 +1,4 @@
+# See README for list of references used to create this class
 import os
 
 import librosa

@@ -23,12 +23,7 @@ def classify(X, y, X_test, y_test, Z):
     :param Z: features to classify
     :return: prediction of Z classes
     """
-    # initiate and fit LSVC
-    # clf = make_pipeline(
-    #     StandardScaler(),
-    #     LinearSVC(random_state=0, tol=1e-5, dual=False, C=2**5.6, max_iter=10000),
-    # ).fit(X, y)
-
+    # TODO: experiment with values of C and gamma
     # uses rbf kernel
     clf = make_pipeline(StandardScaler(), SVC(gamma='auto')).fit(X, y)
     # get predictions

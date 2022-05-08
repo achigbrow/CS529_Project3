@@ -77,7 +77,7 @@ def ms_features(file_df, directory, genre=True):
     """
     genres = []
     features = []
-    n_fft = 256
+    n_fft = 264
     hop_length = round(n_fft / 2)
     for index, row in file_df.iterrows():
         filename = row.wav
@@ -88,15 +88,13 @@ def ms_features(file_df, directory, genre=True):
         # load 3 second time series
         y, sr = librosa.load(filepath, offset=offset, duration=3.0)
         # obtain mel-spectrograms
-        spectros = padding(
-            librosa.feature.melspectrogram(
+        spectros = librosa.feature.melspectrogram(
                 y=y, sr=sr, n_mels=64, fmax=8000, n_fft=n_fft, hop_length=hop_length
-            ),
-            64,
-            550,
-        )
+            )
 
-        features.append(spectros[np.newaxis, ...])
+        s_db = padding(librosa.power_to_db(spectros, ref=np.max), 66, 550)
+
+        features.append(s_db[np.newaxis, ...])
     output = np.concatenate(features, axis=0)
 
     if genre:

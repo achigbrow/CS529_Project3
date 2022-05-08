@@ -8,12 +8,13 @@ from utils.utils import get_classes
 from visualization.mfccs import get_processed_mfccs
 import numpy as np
 import tensorflow as tf
+import pandas as pd
 import time
 from sklearn.svm import SVC
 
 
 def classify(X, y, X_test, y_test, Z):
-    """ Classifies Z using a Linear SVM
+    """Classifies Z using a Linear SVM, prints 80/20 split and creates confusion matrix
 
     :param X: training features
     :param y: training labels
@@ -24,9 +25,10 @@ def classify(X, y, X_test, y_test, Z):
     """
     # TODO: experiment with values of C and gamma
     # uses rbf kernel
-    clf = make_pipeline(StandardScaler(), SVC(gamma='auto')).fit(X, y)
+    clf = make_pipeline(StandardScaler(), SVC(gamma="auto", C=5)).fit(X, y)
     # get predictions
     submission = clf.predict(Z)
+
     # Obtain the training and testing accuracy scores
     train = clf.score(X, y)
     test = clf.score(X_test, y_test)
@@ -51,6 +53,7 @@ def classify(X, y, X_test, y_test, Z):
 
 def driver(train_dir, test_dir, train_csv, test_csv):
     """prepares the data, calls the classifying model, and returns submission file
+        for use with wav files
 
     :param train_dir: directory with training data in wav form
     :param test_dir:  directory with testing data in wav form
@@ -112,21 +115,51 @@ def driver(train_dir, test_dir, train_csv, test_csv):
     write_submission(submission_ids_new, predictions)
 
 
+def csv_driver(data, testdata):
+    """uses a csv of prepared features
+
+    prints a predictions.csv for submission
+
+    :param data: filepath to csv containing training features
+    :param testdata: filepath to csv containing test features
+    :return: none
+    """
+    data = pd.read_csv(data)
+
+    # Drop unnecessary column
+    data = data.drop(["filename"], axis=1)
+
+    genre_list = data.iloc[:, -1]
+    y = genre_list
+
+    # normalizing
+    scaler = StandardScaler()
+    X = scaler.fit_transform(np.array(data.iloc[:, :-1], dtype=float))
+
+    # Splitting data
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    # Predict the test data
+    testdata = pd.read_csv(testdata)
+
+    # Drop unnecessary column
+    testdata_raw = testdata.drop(["filename"], axis=1)
+
+    # normalizing
+    scaler = StandardScaler()
+    Z = scaler.fit_transform(np.array(testdata_raw.iloc[:, :-1], dtype=float))
+
+    test_predictions = classify(X_train, y_train, X_test, y_test, Z)
+
+    prediction_df = pd.DataFrame(zip(testdata.filename, test_predictions))
+
+    prediction_df.rename(columns={0: "id", 1: "genre"}, inplace=True)
+
+    prediction_df.to_csv("predictions.csv", index=False)
+
+
 if __name__ == "__main__":
-    """provides default directories and filepaths"""
-
-    train_dir = r"D:\proj3_data\project3\trainwav"
-    test_dir = r"D:\proj3_data\project3\testwav"
-
-    # debugging csvs
-    # train_csv = r"D:\repos\CS529_Project3\train1.csv"
-    # test_csv = r"D:\repos\CS529_Project3\test1.csv"
-
-    # full csvs
-    train_csv = r"D:\proj3_data\project3\train.csv"
-    test_csv = r"D:\proj3_data\project3\test_idx.csv"
-
     start = time.time()
-    driver(train_dir, test_dir, train_csv, test_csv)
+    csv_driver("../data.csv", "../testdata.csv")
     end = time.time()
     print(end - start)

@@ -5,7 +5,7 @@ import numpy as np
 
 def write_submission(id, genre):
     df = pd.Dataframe({"id": id, "genre": genre})
-    df.to_csv("submit.csv")
+    df.to_csv("predictions.csv")
 
 
 def get_classes(filepath, pad=True):

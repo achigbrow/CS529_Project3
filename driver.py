@@ -1,20 +1,34 @@
-from utils import converter
 import argparse
+import numpy as np
+
+from visualization.mfccs import vizualize_individual_mfccs
+from utils.utils import get_classes
+from visualization.pca import get_features
+from visualization.pca import scatter_plot_pca
+from visualization.spectrogram import display_spectrogram
+
+from classification.svm import csv_driver
+from classification.svm import driver
 
 
-def convert_files(train, train_out, test, test_out):
-    """Converts mp3 files to wav files.
-
-    :param train: full path to directory containing mp3 training files
-    :param train_out: full path to directory where training .wav files should be populated
-    :param test: full path to directory containing mp3 test files
-    :param test_out: full path to directory where testing .wav files should be populated
+def visualize():
+    """
+    runs all visualization and plots
     :return: none
     """
-    train_convert = converter.Converter(train)
-    train_convert.convert(train_out)
-    test_convert = converter.Converter(test)
-    test_convert.convert(test_out)
+    # MFCCs
+    file_list = get_classes("visualization/examples.csv")
+    file_arr = np.array(file_list)
+    directory = "./visualization/wavs"
+    vizualize_individual_mfccs(file_arr, directory)
+
+    # PCA
+    features = get_features(file_arr, directory)
+    classification = file_arr[:, 1]
+    scatter_plot_pca(classification, features)
+
+    # Mel-spectrogram
+    display_spectrogram(file_arr, directory)
 
 
 def build_parser():
@@ -23,31 +37,48 @@ def build_parser():
     parser.add_argument(
         "-train",
         type=str,
-        default=r"D:\proj3_data\project3\train",
+        default="D:/proj3_data/project3/train",
         help="directory containing training mp3s",
     )
     parser.add_argument(
         "-test",
         type=str,
-        default=r"D:\proj3_data\project3\test",
+        default="D:/proj3_data/project3/test",
         help="directory containing testing mp3s",
     )
     parser.add_argument(
-        "-train_out",
-        type=str,
-        default=r"D:\proj3_data\project3\trainwav",
-        help="output directory for train wav files",
+        "-visualize",
+        action=argparse.BooleanOptionalAction,
+        help="pass this to visualize the data",
     )
     parser.add_argument(
-        "-test_out",
-        type=str,
-        default=r"D:\proj3_data\project3\testwav",
-        help="output directory for test wav files",
+        "-svm",
+        action=argparse.BooleanOptionalAction,
+        help="run the SVM model using the pre-processed data",
     )
+    parser.add_argument(
+        "-svm_wav",
+        action=argparse.BooleanOptionalAction,
+        help="run the SVM model using wav files. see README for where to put the files",
+    )
+
     return parser
 
 
 if __name__ == "__main__":
     parser = build_parser()
     options, _ = parser.parse_known_args()
-    convert_files(options.train, options.train_out, options.test, options.test_out)
+
+    if options.visualize:
+        print("visualizing wav files")
+        visualize()
+    else:
+        print("nothing to see here")
+
+    if options.svm:
+        print("running SVM with preprocessed data")
+        csv_driver("data.csv", "testdata.csv")
+
+    if options.svm_wav:
+        print("running SVM with wav directories")
+        driver("train", "test", "train.csv", "test.csv")

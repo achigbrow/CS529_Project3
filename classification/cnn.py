@@ -5,7 +5,8 @@ import librosa.display
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import normalize
 import warnings
-warnings.filterwarnings('ignore')
+
+warnings.filterwarnings("ignore")
 import numpy as np
 import pickle
 import joblib

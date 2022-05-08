@@ -61,7 +61,7 @@ def run_model(X_train, y_train, X_val, y_val, X_test, y_test, X_submit):
     CNNmodel = models.Sequential()
     CNNmodel.add(layers.Conv2D(64, (3, 3), activation="relu", input_shape=input_shape))
     CNNmodel.add(layers.MaxPooling2D((2, 4)))
-    CNNmodel.add(layers.Dropout(0.3))
+    CNNmodel.add(layers.Dropout(0.2))
     CNNmodel.add(
         layers.Conv2D(
             64,
@@ -129,11 +129,6 @@ def driver():
     test_fp = r"D:\proj3_data\project3\new_test_idx.csv"
     # test_fp = r"D:\repos\CS529_Project3\test1.csv"
 
-    # train_list = np.array(get_classes(train_fp))
-    # test_list = np.array(get_classes(test_fp))
-
-    # example_list = np.array(get_classes(r"D:\repos\CS529_Project3\examples.csv"))
-
     train_df = get_training(train_fp)
     test_df = get_test(test_fp)
 
@@ -190,38 +185,39 @@ def driver():
     current_time = time.strftime("%H:%M:%S", t)
     print(current_time)
 
-    train_features = np.log2(train_features + 1)
+    # train_features = np.log2(train_features + 1)
     train_features = train_features.reshape(
         train_features.shape[0], train_features.shape[1], train_features.shape[2], 1
     )
     # np.save("train_features", train_features)
 
-    test_features = np.log2(test_features + 1)
+    # test_features = np.log2(test_features + 1)
     test_features = test_features.reshape(
         test_features.shape[0], test_features.shape[1], test_features.shape[2], 1
     )
+
     # np.save("test_features", test_features)
 
-    val_features = np.log2(val_features + 1)
+    # val_features = np.log2(val_features + 1)
     val_features = val_features.reshape(
         val_features.shape[0], val_features.shape[1], val_features.shape[2], 1
     )
-    # np.save("val_features", val_features)
+    # # np.save("val_features", val_features)
 
-    submit_features = np.log2(submit_features + 1)
+    # submit_features = np.log2(submit_features + 1)
     submit_features = submit_features.reshape(
         submit_features.shape[0], submit_features.shape[1], submit_features.shape[2], 1
     )
-    # np.save("submit_features", test_features)
+    # # np.save("submit_features", test_features)
 
     train_labels = np.array(train_labels)
     # np.save("train_labels", train_labels)
 
     test_labels = np.array(test_labels)
-    # np.save("test_labels", test_labels)
+    # # np.save("test_labels", test_labels)
 
     val_labels = np.array(val_labels)
-    # np.save("val_labels", val_labels)
+    # # np.save("val_labels", val_labels)
 
     print("getting predictions")
     t = time.localtime()

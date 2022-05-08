@@ -294,7 +294,6 @@ if __name__ == "__main__":
     # file_list = get_classes(r"D:\repos\CS529_Project3\train1.csv")
     # file_list = get_classes(r"D:\repos\CS529_Project3\examples.csv")
     file_list = np.array(file_list)
-    print(file_list.shape)
     train_dir = r"D:\proj3_data\project3\trainwav"
     # vizualize_individual_mfccs(file_list, train_dir)
     scatter_by_amp(file_list, train_dir)

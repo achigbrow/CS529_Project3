@@ -14,8 +14,8 @@ class Converter:
 
     def convert_mp3(self, mp3, directory, output_dir):
         name = mp3[:-3]
-        source = r"{0:s}\{1:s}".format(directory, mp3)
-        destination = r"{0:s}\{1:s}wav".format(output_dir, name)
+        source = r"{0:s}/{1:s}".format(directory, mp3)
+        destination = r"{0:s}/{1:s}wav".format(output_dir, name)
 
         # convert mp3 to wave
         sound = AudioSegment.from_mp3(source)

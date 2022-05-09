@@ -48,7 +48,7 @@ def classify(X, y, X_test, y_test, Z):
     ).numpy()
     np.savetxt("SVMconfusion.csv", conf_mat, delimiter=",")
 
-    return submission
+    return submission, test
 
 
 def driver(train_dir, test_dir, train_csv, test_csv):
@@ -104,7 +104,7 @@ def driver(train_dir, test_dir, train_csv, test_csv):
 
     # make predictions using Linear SVM
     predict_s = time.time()
-    predictions = classify(
+    predictions, _ = classify(
         train_features, train_labels, test_features, test_labels, submit_features
     )
     predictions = predictions.astype(int)
@@ -113,6 +113,57 @@ def driver(train_dir, test_dir, train_csv, test_csv):
 
     # create submission csv
     write_submission(submission_ids_new, predictions)
+
+def forest_svm(n, data, testdata):
+    data = pd.read_csv(data)
+
+    # Drop unnecessary column
+    data = data.drop(["filename"], axis=1)
+
+    genre_list = data.iloc[:, -1]
+    y = genre_list
+
+    # Predict the test data
+    testdata = pd.read_csv(testdata)
+
+    # Drop unnecessary column
+    testdata_raw = testdata.drop(["filename"], axis=1)
+
+    # normalizing
+    scaler = StandardScaler()
+    # training features
+    X = scaler.fit_transform(np.array(data.iloc[:, :-1], dtype=float))
+    # testing features
+    Z = scaler.fit_transform(np.array(testdata_raw.iloc[:, :-1], dtype=float))
+
+    prediction_df = pd.DataFrame({'id':testdata['filename']})
+    print(prediction_df.head())
+
+    while n > 0:
+
+        # Splitting data
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+        test_predictions = classify(X_train, y_train, X_test, y_test, Z)
+        predicted, test = test_predictions
+        if test > 0.59:
+            prediction_df[str(n)] = predicted
+            n = n-1
+        print("step", n)
+
+    trees = prediction_df.drop(['id'], axis=1)
+    print(trees.head())
+
+    trees['votes'] = trees.mode(axis=1)[0].astype(int)
+    print(trees.head())
+
+    ids = list(prediction_df['id'])
+    print(ids)
+
+    final_pred = pd.DataFrame({'id': ids, 'genre': trees['votes']})
+    print(final_pred.head())
+    final_pred.to_csv("predictions.csv", index=False)
+
 
 
 def csv_driver(data, testdata):
@@ -149,7 +200,7 @@ def csv_driver(data, testdata):
     scaler = StandardScaler()
     Z = scaler.fit_transform(np.array(testdata_raw.iloc[:, :-1], dtype=float))
 
-    test_predictions = classify(X_train, y_train, X_test, y_test, Z)
+    test_predictions, _ = classify(X_train, y_train, X_test, y_test, Z)
 
     prediction_df = pd.DataFrame(zip(testdata.filename, test_predictions))
 
@@ -157,9 +208,40 @@ def csv_driver(data, testdata):
 
     prediction_df.to_csv("predictions.csv", index=False)
 
+def get_predictions(data, testdata):
+    data = pd.read_csv(data)
+
+    # Drop unnecessary column
+    data = data.drop(["filename"], axis=1)
+
+    genre_list = data.iloc[:, -1]
+    y = genre_list
+
+    # normalizing
+    scaler = StandardScaler()
+    X = scaler.fit_transform(np.array(data.iloc[:, :-1], dtype=float))
+
+    # Splitting data
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    # Predict the test data
+    testdata = pd.read_csv(testdata)
+
+    # Drop unnecessary column
+    testdata_raw = testdata.drop(["filename"], axis=1)
+
+    # normalizing
+    scaler = StandardScaler()
+    Z = scaler.fit_transform(np.array(testdata_raw.iloc[:, :-1], dtype=float))
+
+    test_predictions = classify(X_train, y_train, X_test, y_test, Z)
+
+    return test_predictions
+
 
 if __name__ == "__main__":
     start = time.time()
-    csv_driver("../data.csv", "../testdata.csv")
+    # csv_driver("../data.csv", "../testdata.csv")
+    forest_svm(150, "../data.csv", "../testdata.csv")
     end = time.time()
     print(end - start)

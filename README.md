@@ -1,8 +1,9 @@
 # CS529_Project3
 ## Project Dependencies
-- Python 3.9 or higher
+
 - FFMPEG
 - Pydub
+- Librosa
 
 ## Classifiers
 We provide the following complete classifiers in this project:

@@ -67,8 +67,8 @@ def run_model(X_train, y_train, X_val, y_val, X_test, y_test, X_submit):
             64,
             (3, 5),
             activation="relu",
-            kernel_regularizer=l2(0.01),
-            bias_regularizer=l2(0.01),
+            # kernel_regularizer=l2(0.01),
+            # bias_regularizer=l2(0.01),
         )
     )
     CNNmodel.add(layers.MaxPooling2D((2, 4)))
@@ -77,8 +77,8 @@ def run_model(X_train, y_train, X_val, y_val, X_test, y_test, X_submit):
         layers.Dense(
             32,
             activation="relu",
-            kernel_regularizer=l2(0.01),
-            bias_regularizer=l2(0.01),
+            # kernel_regularizer=l2(0.01),
+            # bias_regularizer=l2(0.01),
         )
     )
     CNNmodel.add(layers.Dense(6, activation="softmax"))
@@ -87,7 +87,7 @@ def run_model(X_train, y_train, X_val, y_val, X_test, y_test, X_submit):
         loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
         metrics=["accuracy"],
     )
-    history = CNNmodel.fit(X_train, y_train, epochs=20, validation_data=(X_val, y_val))
+    history = CNNmodel.fit(X_train, y_train, epochs=120, validation_data=(X_val, y_val))
     predicted = CNNmodel.predict(X_test)
 
     predicted = np.argmax(predicted, axis=1)

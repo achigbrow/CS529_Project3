@@ -87,13 +87,11 @@ def ms_features(file_df, directory, genre=True):
         # load 3 second time series
         y, sr = librosa.load(filepath, offset=offset, duration=3.0)
         # obtain mel-spectrograms
-        spectros = librosa.feature.melspectrogram(
+        spectros = padding(librosa.feature.melspectrogram(
             y=y, sr=sr, n_mels=64, fmax=8000, n_fft=n_fft, hop_length=hop_length
-        )
+        ), 66, 550)
 
-        s_db = padding(librosa.power_to_db(spectros**2, ref=np.max), 66, 550)
-
-        features.append(s_db[np.newaxis, ...])
+        features.append(spectros[np.newaxis, ...])
     output = np.concatenate(features, axis=0)
 
     if genre:

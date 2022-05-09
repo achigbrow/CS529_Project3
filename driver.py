@@ -50,27 +50,32 @@ def build_parser():
     )
     parser.add_argument(
         "-visualize",
-        action=argparse.BooleanOptionalAction,
+        default=False,
+        action="store_true",
         help="pass this to visualize the data",
     )
     parser.add_argument(
         "-svm",
-        action=argparse.BooleanOptionalAction,
+        default=False,
+        action="store_true",
         help="run the SVM model using the pre-processed data",
     )
     parser.add_argument(
         "-svm_wav",
-        action=argparse.BooleanOptionalAction,
+        default=False,
+        action="store_true",
         help="run the SVM model using wav files. see README for where to put the files",
     )
     parser.add_argument(
         "-neuralnet",
-        action=argparse.BooleanOptionalAction,
+        default=False,
+        action="store_true",
         help="run the Neural Network model using the pre-processed data",
     )
     parser.add_argument(
         "-ensemble",
-        action=argparse.BooleanOptionalAction,
+        default=False,
+        action="store_true",
         help="run the Ensemble model using the pre-processed data",
     )
     parser.add_argument(

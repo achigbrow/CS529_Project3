@@ -9,6 +9,8 @@ from visualization.spectrogram import display_spectrogram
 
 from classification.svm import csv_driver
 from classification.svm import driver
+from classification.neuralnet import NNModel
+from classification.neuralnet import EnsembleNNModel
 
 
 def visualize():
@@ -61,6 +63,22 @@ def build_parser():
         action=argparse.BooleanOptionalAction,
         help="run the SVM model using wav files. see README for where to put the files",
     )
+    parser.add_argument(
+        "-neuralnet",
+        action=argparse.BooleanOptionalAction,
+        help="run the Neural Network model using the pre-processed data",
+    )
+    parser.add_argument(
+        "-ensemble",
+        action=argparse.BooleanOptionalAction,
+        help="run the Ensemble model using the pre-processed data",
+    )
+    parser.add_argument(
+        "-ensemble_count",
+        type=int,
+        default=10,
+        help="number of agents added to the Ensemble",
+    )
 
     return parser
 
@@ -75,6 +93,7 @@ if __name__ == "__main__":
     else:
         print("nothing to see here")
 
+
     if options.svm:
         print("running SVM with preprocessed data")
         csv_driver("data.csv", "testdata.csv")
@@ -82,3 +101,12 @@ if __name__ == "__main__":
     if options.svm_wav:
         print("running SVM with wav directories")
         driver("train", "test", "train.csv", "test.csv")
+
+    if options.neuralnet:
+        print("Running Neural Network with preprocessed data")
+        NNModel()
+
+    if options.ensemble:
+        print("Running Ensemble with" + str(options.ensemble_count) + "Neural Networks")
+        EnsembleNNModel(options.ensemble_count)
+

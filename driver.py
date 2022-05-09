@@ -66,18 +66,18 @@ def build_parser():
     parser.add_argument(
         "-neuralnet",
         action=argparse.BooleanOptionalAction,
-        help="run the SVM model using the pre-processed data",
+        help="run the Neural Network model using the pre-processed data",
     )
     parser.add_argument(
         "-ensemble",
         action=argparse.BooleanOptionalAction,
-        help="run the Neural Network model using the pre-processed data",
+        help="run the Ensemble model using the pre-processed data",
     )
     parser.add_argument(
         "-ensemble_count",
         type=int,
-        action=argparse.BooleanOptionalAction,
-        help="run the Ensemble model using the pre-processed data",
+        default=10,
+        help="number of agents added to the Ensemble",
     )
 
     return parser

@@ -7,6 +7,8 @@ We provide the following complete classifiers in this project:
 - Neural Network
 - Ensemble Neural Network
 
+We achieved our highest accuracy using the Ensemble Neural Network. 
+
 There is also a Convolutional Neural Network however, it is still a work in progress.
 
 ### SVM

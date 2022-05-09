@@ -22,6 +22,20 @@ You can run the SVM using our pre-processed data using the following command:
 python driver.py -svm
 ```
 
+### Neural Network
+You can run the Neural Network using our pre-processed data using the following command:
+
+```shell
+python driver.py -neuralnet
+```
+
+### Ensemble
+You can run the Ensemble using our pre-processed data using the following command:
+
+```shell
+python driver.py -ensemble -ensemble_count=10
+```
+
 This will print the training and testing accuracy to `stdout`, produce a confusion 
 matrix saved to a csv (`SVMconfusion.csv`), and create a submission file called 
 `predictions.csv`.
